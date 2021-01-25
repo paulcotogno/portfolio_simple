@@ -1,22 +1,33 @@
 <template>
   <div class="project_wrapper">
+    <div id="nav">
+      <div class="nav_wrapper">
+        <h1 id="title">
+          <a
+            @click.prevent="
+              $router.go(-1);
+              this.return();
+            "
+            >&#8617;</a
+          >
+          <span>{{data[$route.params.projetId].title}}</span>
+        </h1>
+        <h2><a href="#">Contact</a></h2>
+      </div>
+    </div>
     <div class="background_wrapper"></div>
     <div class="project_home">
       <div class="image_wrapper" id="anchor">
-        <img src="img/project_seoelp.png" alt="" />
+        <img :src="'img/' + data[$route.params.projetId].imagePath" alt="" />
         <div class="text_wrapper">
-          <p>College Project</p>
-          <h1>Seo Elp</h1>
+          <p> {{data[$route.params.projetId].projectType}} </p>
+          <h1>{{ data[$route.params.projetId].title }}</h1>
         </div>
       </div>
     </div>
     <div class="content_wrapper">
       <ul>
-        <li>Developement</li>
-        <span>&#9883;</span>
-        <li>Design</li>
-        <span>&#9883;</span>
-        <li>Group Workflow</li>
+        <li v-for="cat in data[$route.params.projetId].category" :key="cat">{{cat}}</li>
       </ul>
       <p class="resume">
         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus ipsam
@@ -25,7 +36,7 @@
         exercitationem autem!
       </p>
       <div class="link_website">
-        <a class="link_wrapper" href="http://seo-elp.fr">
+        <a class="link_wrapper" :href="data[$route.params.projetId].webSiteLink">
           <p>Go to the website</p>
         </a>
       </div>
@@ -35,9 +46,27 @@
 
 <script>
 export default {
+  data() {
+    return {
+      dataBind: "",
+    };
+  },
+  props: {
+      data: {
+      type: Array,
+    },
+  },
   methods: {
     navbar() {
       window.addEventListener("scroll", () => {
+        if (document.getElementById("anchor")) {
+          window.addEventListener("scroll", scrollNav());
+        } else {
+          window.removeEventListener("scroll", scrollNav());
+        }
+      });
+
+      function scrollNav() {
         let ws = window.pageYOffset;
         let an = document.getElementById("anchor");
 
@@ -52,7 +81,12 @@ export default {
         } else {
           document.getElementById("title").classList.remove("infos");
         }
-      });
+      }
+    },
+  },
+  props: {
+    data: {
+      type: Array,
     },
   },
   mounted() {
@@ -72,15 +106,15 @@ export default {
   }
   .nav_wrapper {
     h1 {
-      &::after {
-        content: "Seo Elp";
+      span {
         font-weight: 200;
         margin-left: 20px;
         opacity: 0;
         transition: all 0.2s ease;
+        text-transform: uppercase;
       }
       &.infos {
-        &::after {
+        span {
           opacity: 1;
         }
       }
@@ -91,6 +125,9 @@ export default {
 .project_wrapper {
   height: 200vh;
   padding: 0 15%;
+  a {
+    cursor: pointer;
+  }
   .background_wrapper {
     position: absolute;
     top: 0;
@@ -128,6 +165,7 @@ export default {
         h1 {
           font-size: 5em;
           margin: 20px 0 0 0;
+          text-transform: uppercase;
         }
         * {
           margin: 0;
@@ -149,6 +187,9 @@ export default {
       justify-content: space-evenly;
       li {
         list-style-type: none;
+        span{
+          margin: 0 auto;
+        }
       }
     }
     .resume {
@@ -169,17 +210,17 @@ export default {
       justify-content: center;
       align-items: center;
       transition: all 0.2s ease;
-      &:hover{
-          border-radius: 15px;
-          .link_wrapper{
-              background: rgba($color: #020202, $alpha: 0.6);
-              p{
-                  font-size: 1.1em;
-              }
+      &:hover {
+        border-radius: 15px;
+        .link_wrapper {
+          background: rgba($color: #020202, $alpha: 0.6);
+          p {
+            font-size: 1.1em;
           }
+        }
       }
       .link_wrapper {
-          transition: all 0.3s ease;
+        transition: all 0.3s ease;
         width: 100%;
         height: 100%;
         display: flex;

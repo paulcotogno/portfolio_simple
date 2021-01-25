@@ -16,37 +16,25 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
-    path: '/seo-elp',
-    name: 'Seo-Elp',
+    path: '/project/:projetId',
+    name: 'Project',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Project-SeoElp.vue')
-  },
-  {
-    path: '/alias',
-    name: 'Alias',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Project-Alias.vue')
-  },
-  {
-    path: '/the dots',
-    name: 'The Dots',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Project-TheDots.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Project-Components.vue')
   },
 ]
 
 const router = createRouter({
-  scrollBehavior() {
-    return { x: 0, y: 0 };
-  },
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  },
 })
 
 export default router

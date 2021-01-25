@@ -4,7 +4,7 @@
     :class="'Project' + title"
     :style="{ backgroundImage: 'url(img/' + imagePath + ')' }"
   >
-    <router-link :to="'/' + title"> </router-link>
+    <router-link :to="{name:'Project', params: {projetId : id}}"> </router-link>
   </div>
 </template>
 
@@ -24,6 +24,9 @@ export default {
       type: String,
       default: "project_alias.png",
     },
+    id: {
+      type: Number,
+    }
   },
   methods: {
     distord() {
@@ -31,7 +34,7 @@ export default {
       const diff = newPos - this.currentPos;
       const speed = diff * 0.08;
 
-      this.$refs.SkewIt.style.transform = "skewY(" + speed + "deg)";
+      //this.$refs.SkewIt.style.transform = "skewY(" + speed + "deg)";
 
       this.currentPos = newPos;
     },

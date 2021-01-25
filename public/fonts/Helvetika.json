@@ -1,0 +1,98 @@
+geometry.morphAttributes.position[0] = new THREE.Float32BufferAttribute(
+        sphereAttributes,
+        3
+      );
+
+      spherePositions.push(
+          x * Math.sqrt(1 - (y * y) / 2 - (z * z) / 2 + (y * y * z * z) / 3),
+          y * Math.sqrt(1 - (z * z) / 2 - (x * x) / 2 + (z * z * x * x) / 3),
+          z * Math.sqrt(1 - (x * x) / 2 - (y * y) / 2 + (x * x * y * y) / 3)
+        );
+
+
+        ////////////////////////////////
+      ///////////Morph/////////////
+      ////////////////////////////////
+
+      const geometry = this.createGeometry();
+
+      const material = new THREE.MeshPhongMaterial({
+        color: 0xff0000,
+        flatShading: true,
+        morphTargets: true,
+      });
+
+      mesh = new THREE.Mesh(geometry, material);
+      mesh.morphTargetInfluences[0] = 1;
+      //scene.add(mesh);
+    },
+    createGeometry() {
+      let geometry = new THREE.SphereBufferGeometry(3, 70, 70);
+
+      geometry.morphAttributes.position = [];
+
+      const positions = geometry.attributes.position.array;
+
+      const twistPositions = [];
+      const direction = new THREE.Vector3(1, 0, 0).normalize();
+      const vertex = new THREE.Vector3();
+
+      for (let i = 0; i < positions.length; i += 3) {
+        const x = positions[i];
+        const y = positions[i + 1];
+        const z = positions[i + 2];
+
+        vertex.set(x * 3, y, z);
+
+        vertex
+          .applyAxisAngle(direction, Math.PI * x * 2)
+          .toArray(twistPositions, twistPositions.length);
+      }
+
+      // add the spherical positions as the first morph target
+      geometry.morphAttributes.position[0] = new THREE.Float32BufferAttribute(
+        twistPositions,
+        3
+      );
+
+      return geometry;
+    },
+
+        if (window.pageYOffset > window.innerHeight / 2 + 100000) {
+          let x, y, z, index;
+          x = y = z = index = 0;
+  
+          var k = 1;
+  
+          mesh.geometry.radius = +4;
+  
+          var time = performance.now() * 0.003;
+  
+          let p = mesh.geometry.attributes.position.array;
+          for (let f = 0; f < 3; f++) {
+            p[i] =
+              this.BallSize +
+              this.speed * noise.perlin3(i * 0.02 + time, i * 0.3, i * 0.1) * 2;
+            p[i + 1] =
+              this.BallSize +
+              this.speed * noise.perlin3(i * 0.02 + time, i * 0.3, i * 0.1) * 2;
+            p[i + 2] =
+              this.BallSize +
+              this.speed * noise.perlin3(i * 0.02 + time, i * 0.3, i * 0.1) * 2;
+          }
+  
+          mesh.geometry.attributes.position.needsUpdate = true;
+  
+          mesh.geometry.computeVertexNormals();
+          mesh.geometry.normalsNeedUpdate = true;
+          mesh.geometry.verticesNeedUpdate = true;
+          mesh.geometry.computeBoundingBox();
+          mesh.geometry.computeBoundingSphere();
+        }
+
+        
+        if (this.scrollVal < 1) {
+          mesh.morphTargetInfluences[0] = -this.scrollVal + 1;
+        } else {
+          mesh.morphTargetInfluences[0] = 0;
+        }

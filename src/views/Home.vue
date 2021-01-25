@@ -1,23 +1,47 @@
 <template>
+  <div id="nav">
+    <div class="nav_wrapper">
+      <h2 id="title">
+        <router-link to="/"
+          ><img src="@/assets/img/logo.svg" alt=""
+        /></router-link>
+      </h2>
+      <h2><a href="#">Contact</a></h2>
+    </div>
+  </div>
   <div id="home_page" class="home_page">
+    <h1 ref="titre">
+      <span style="transitiondelay: 0s; color: #bbbbbb">Paul Cotogno</span>
+      <span style="transitiondelay: 0.06s; color: #bcbcbc">Paul Cotogno</span>
+      <span style="transitiondelay: 0.02s; color: #cccccc">Paul Cotogno</span>
+      <span style="transitiondelay: 0.06s; color: #cdcdcd">Paul Cotogno</span>
+      <span style="transitiondelay: 0.04s; color: #dddddd">Paul Cotogno</span>
+      <span style="transitiondelay: 0.06s; color: #dedede">Paul Cotogno</span>
+      <span style="transitiondelay: 0.06s; color: #eeeeee">Paul Cotogno</span>
+      <span style="transitiondelay: 0.06s; color: #efefef">Paul Cotogno</span>
+      <span style="transitiondelay: 0.08s; color: #ffffff">Paul Cotogno</span>
+    </h1>
     <div class="renderer_wrapper">
       <div id="renderer"></div>
       <div class="nav_down">
         <h2 class="downright"><a href="#">@Instagram</a></h2>
-        <h2 class="downright"><a href="#">@Behance</a></h2>
+        <h2 class="downright">
+          <a href="https://www.behance.net/PaulCotogno">@Behance</a>
+        </h2>
       </div>
       <div class="home_wrapper">
         <div class="white-blend"></div>
       </div>
       <ProjectsHome
-        v-for="{ title, imagePath, projectType, color } in data"
+        v-for="{ title, imagePath, projectType, color, id } in data"
         :key="title"
         :title="title"
         :imagePath="imagePath"
+        :id="id"
         class="page_components"
         @mouseenter="hover(title, imagePath, projectType, color)"
         @mouseleave="leave"
-        @click="this.visible = true"
+        @click="this.visible"
       />
       <TextHover
         ref="texthover"
@@ -27,7 +51,6 @@
         :initialVisible="this.textHoverVisible"
       />
     </div>
-    <Galery />
     <component :is="this.componentVisible" v-show="false" />
   </div>
 </template>
@@ -38,8 +61,10 @@ import TextHover from "@/components/TextHoverWrapper";
 import Galery from "@/components/Galery";
 
 import VueBlotter from "vue-blotter";
-import THREE from "three";
+//import * as THREE from "three";
 import { Noise } from "noisejs";
+
+let mesh, scene;
 
 export default {
   components: {
@@ -62,8 +87,10 @@ export default {
       currentPos: window.pageYOffset,
       color: 0xffffff,
       varScroll: 0.5,
-      BallSize: 0.45,
+      BallSize: 10,
       visible: false,
+      mouse: { x: "", y: "" },
+      meshReact: "",
     };
   },
   props: {
@@ -75,18 +102,23 @@ export default {
     init() {
       let container = document.getElementById("renderer");
 
-      this.scene = new THREE.Scene();
+      scene = new THREE.Scene();
 
       this.camera = new THREE.PerspectiveCamera(
         70,
         container.clientWidth / container.clientHeight,
-        0.01,
-        10
+        0.1,
+        1000
       );
 
-      this.scene.add(this.camera);
+      scene.add(this.camera);
 
       this.camera.position.z = 1;
+
+      this.renderer = new THREE.WebGLRenderer({ antialias: true });
+      this.renderer.setSize(container.clientWidth, container.clientHeight);
+      this.renderer.setClearColor(0x020202, 1);
+      container.appendChild(this.renderer.domElement);
 
       ///////////
       //LIGHTS///
@@ -97,57 +129,35 @@ export default {
       this.directionalLight = new THREE.DirectionalLight(0xffffff, 1.4);
       this.directionalLight.position.set(0, 1, 1);
       this.directionalLight.target.position.set(0, 0, 0);
-      this.scene.add(this.directionalLight.target);
-      this.scene.add(this.directionalLight);
+      scene.add(this.directionalLight.target);
+      scene.add(this.directionalLight);
 
-      this.scene.add(this.directionalLight.target);
+      scene.add(this.directionalLight.target);
 
-      this.scene.add(this.light);
+      scene.add(this.light);
 
       ////////////////////////////////
-      ///////////geometry/////////////
+      ///////////sphere/////////////
       ////////////////////////////////
 
-
-      /*this.enviMap = new THREE.CubeTextureLoader()
-        .setPath('textures/')
-        .load(['px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png' ]);
-      */
-
-      this.planeMaterial = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        refractionRatio: 0.95,
+      this.material = new THREE.MeshNormalMaterial({
+        wireframe: false,
       });
-
-      this.plane = new THREE.Mesh(this.rectangle, this.planeMaterial);
-      this.plane.position.set(0, 0, 0.5);
-
-      this.material = new THREE.MeshPhysicalMaterial({
-        reflectivity: 0.47,
-        wireframe: true,
-      });
-
       this.sphere = new THREE.Mesh(
-        new THREE.SphereGeometry(0, 80, 80),
+        new THREE.SphereGeometry(10, 100, 100),
         this.material
       );
 
-      this.scene.add(this.sphere);
-
-      this.renderer = new THREE.WebGLRenderer({ antialias: true });
-      this.renderer.setSize(container.clientWidth, container.clientHeight);
-      this.renderer.setClearColor(0x020202, 1);
-      container.appendChild(this.renderer.domElement);
+      scene.add(this.sphere);
     },
     amountNoiseDistord() {
       var newPos = window.pageYOffset;
       const diff = Math.abs(newPos - this.currentPos);
       if (diff < 100) {
-        this.speed = diff * 0.0016 + 0.05;
+        this.speed = diff * 0.001 + 0.05;
       } else if (diff > 100) {
-        this.speed = 0.21;
+        this.speed = 0.15;
       }
-
       this.currentPos = newPos;
     },
     hover(title, path, type, color) {
@@ -177,28 +187,27 @@ export default {
       requestAnimationFrame(this.animate);
       //this.sphere.rotation.y += 0.008;
       this.material.color = new THREE.Color(this.color);
-      this.plane.position.set(0, 0, -this.varScroll * 3 + 2);
       this.update();
       this.amountNoiseDistord();
-      this.renderer.render(this.scene, this.camera);
+      this.renderer.render(scene, this.camera);
     },
     update() {
       var noise = new Noise();
 
+      var k = 1;
       //noise.seed(Math.random());
       this.sphere.geometry.radius = +4;
-      var time = performance.now() * 0.003;
+      var timeV = performance.now() * 0.003;
       //var value = noise.perlin3(p.x * k + time, p.y * k, p.z * k);
-
-      var k = 2;
       for (var i = 0; i < this.sphere.geometry.vertices.length; i++) {
-        var p = this.sphere.geometry.vertices[i];
-        p.normalize().multiplyScalar(
+        var v = this.sphere.geometry.vertices[i];
+        v.normalize().multiplyScalar(
           this.BallSize +
-            this.speed * noise.perlin3(p.x * k + time, p.y * k, p.z * k)
+            this.speed * noise.perlin3(v.x * k + timeV, v.y * k, v.z * k)
           //noise.perlin3(p.x * k + time, p.y * k, p.z * k)
         );
       }
+
       this.sphere.geometry.computeVertexNormals();
       this.sphere.geometry.normalsNeedUpdate = true;
       this.sphere.geometry.verticesNeedUpdate = true;
@@ -215,6 +224,9 @@ export default {
         pos.y = ((m.y / window.innerHeight) * 2 - 2) * -1;
 
         this.directionalLight.target.position.set(pos.x, pos.y, 0.5);
+
+        this.sphere.rotation.x = pos.x;
+        this.sphere.rotation.z = pos.y;
       });
 
       window.addEventListener("scroll", () => {
@@ -239,6 +251,47 @@ export default {
         this.responsiveValueCheck();
       });
     },
+    animateHomeTitle() {
+      var titles = document.querySelectorAll(".home_page>h1>span");
+      var titre = this.$refs.titre;
+      var mouse = { x: 0, y: 0 };
+      var pos = { x: 0, y: 0 };
+
+      window.addEventListener("mousemove", (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+
+        pos.x = (mouse.x - window.innerWidth / 2) / 200 - 50;
+        pos.y = (mouse.y - window.innerHeight / 2) / 15;
+
+        if (titles) {
+          titre.style.transform =
+            "translate(" +
+            ((mouse.x - window.innerWidth / 2) / 300 - 50) +
+            "%," +
+            (mouse.y - window.innerHeight / 2) / 15 +
+            "px)";
+          for (var i = 0; i < titles.length; i++) {
+            var title = titles[i];
+            title.style.transform =
+              "translate(" +
+              ((mouse.x - window.innerWidth / 2) / (200 + 80 * i) - 50) +
+              "%," +
+              ((mouse.y - window.innerHeight / 2) / (15 + 5 * i) - 30) +
+              "px)";
+          }
+        }
+      });
+
+      window.addEventListener("scroll", () => {
+        var scroll = window.pageYOffset;
+
+        for (var i = 0; i < titles.length; i++) {
+          var title = titles[i];
+          title.style.marginTop = (scroll / 80) * i + "px";
+        }
+      });
+    },
   },
   mounted() {
     this.init();
@@ -246,16 +299,82 @@ export default {
     this.animInteract();
     this.responsiveValueCheck();
     this.windowResizeCheck();
+    this.animateHomeTitle();
   },
 };
 </script>
 
 <style lang="scss">
-.home_page {
+#nav {
+  z-index: 2;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  right: 0;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: "Pano";
+  font-size: 0.7em;
+  .nav_wrapper {
+    width: 100%;
+    display: flex;
+    padding: 1% 4%;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    h2 {
+      text-align: left;
+      width: fit-content;
+      margin: 0;
+      a {
+        color: white;
+        text-decoration: none;
+      }
+    }
+    #title {
+      a {
+        img {
+          height: 20px;
+        }
+      }
+    }
+    h2 {
+      width: fit-content;
+      a {
+        font-weight: 300;
+        color: white;
+      }
+    }
+  }
+}
+.home_page {
+  display: block;
   justify-content: space-evenly;
   align-items: center;
   flex-direction: column;
+  h1 {
+    position: absolute;
+    text-align: center;
+    margin: 0 auto;
+    width: max-content;
+    font-size: 4.2em;
+    text-transform: uppercase;
+    left: 50%;
+    top: 50vh;
+    transform: translate(-50%, -50%);
+    color: #b2b2b2;
+    span {
+      position: absolute;
+      transition: all 0.2s ease;
+      width: max-content;
+      left: 50%;
+      top: 0;
+      transform: translate(-50%, 0);
+      color: rgb(255, 255, 255);
+    }
+  }
   .nav_down {
     position: fixed;
     bottom: 0;
@@ -272,7 +391,7 @@ export default {
     }
   }
   .home_wrapper {
-    height: 70vh;
+    height: 30vh;
     width: 100vw;
   }
   .page_components {
@@ -308,7 +427,7 @@ export default {
     }
   }
 }
-.renderer_wrapper{
+.renderer_wrapper {
   margin-bottom: 40vh;
 }
 #renderer {
@@ -347,7 +466,7 @@ body {
       text-align: center;
       margin: 0;
       height: 45px;
-      font-family: 'Monument';
+      font-family: "Monument";
       span {
         color: rgba($color: #808080, $alpha: 1);
       }
