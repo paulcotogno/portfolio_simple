@@ -6,11 +6,10 @@
           <a
             @click.prevent="
               $router.go(-1);
-              this.return();
             "
             >&#8617;</a
           >
-          <span>{{data[$route.params.projetId].title}}</span>
+          <span>{{ data[$route.params.projetId].title }}</span>
         </h1>
         <h2><a href="#">Contact</a></h2>
       </div>
@@ -20,14 +19,16 @@
       <div class="image_wrapper" id="anchor">
         <img :src="'img/' + data[$route.params.projetId].imagePath" alt="" />
         <div class="text_wrapper">
-          <p> {{data[$route.params.projetId].projectType}} </p>
+          <p>{{ data[$route.params.projetId].projectType }}</p>
           <h1>{{ data[$route.params.projetId].title }}</h1>
         </div>
       </div>
     </div>
     <div class="content_wrapper">
       <ul>
-        <li v-for="cat in data[$route.params.projetId].category" :key="cat">{{cat}}</li>
+        <li v-for="cat in data[$route.params.projetId].category" :key="cat">
+          {{ cat }}
+        </li>
       </ul>
       <p class="resume">
         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus ipsam
@@ -36,7 +37,10 @@
         exercitationem autem!
       </p>
       <div class="link_website">
-        <a class="link_wrapper" :href="data[$route.params.projetId].webSiteLink">
+        <a
+          class="link_wrapper"
+          :href="data[$route.params.projetId].webSiteLink"
+        >
           <p>Go to the website</p>
         </a>
       </div>
@@ -52,36 +56,30 @@ export default {
     };
   },
   props: {
-      data: {
+    data: {
       type: Array,
     },
   },
   methods: {
     navbar() {
       window.addEventListener("scroll", () => {
-        if (document.getElementById("anchor")) {
-          window.addEventListener("scroll", scrollNav());
-        } else {
-          window.removeEventListener("scroll", scrollNav());
-        }
-      });
-
-      function scrollNav() {
         let ws = window.pageYOffset;
         let an = document.getElementById("anchor");
 
-        if (ws > an.offsetTop + an.offsetHeight - 100) {
-          document.getElementById("nav").classList.add("down");
-        } else {
-          document.getElementById("nav").classList.remove("down");
-        }
+        if (an) {
+          if (ws > an.offsetTop + an.offsetHeight - 100) {
+            document.getElementById("nav").classList.add("down");
+          } else {
+            document.getElementById("nav").classList.remove("down");
+          }
 
-        if (ws > an.offsetTop + an.offsetHeight) {
-          document.getElementById("title").classList.add("infos");
-        } else {
-          document.getElementById("title").classList.remove("infos");
+          if (ws > an.offsetTop + an.offsetHeight) {
+            document.getElementById("title").classList.add("infos");
+          } else {
+            document.getElementById("title").classList.remove("infos");
+          }
         }
-      }
+      });
     },
   },
   props: {
@@ -187,7 +185,7 @@ export default {
       justify-content: space-evenly;
       li {
         list-style-type: none;
-        span{
+        span {
           margin: 0 auto;
         }
       }

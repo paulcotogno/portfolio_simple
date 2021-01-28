@@ -6,12 +6,14 @@
           ><img src="@/assets/img/logo.svg" alt=""
         /></router-link>
       </h2>
-      <h2><a href="#">Contact</a></h2>
+      <h2><router-link to="/about">Contact</router-link></h2>
     </div>
   </div>
   <div id="home_page" class="home_page">
     <h1 ref="titre">
-      <span style="transitiondelay: 0s; color: #bbbbbb">Paul Cotogno</span>
+      <span class="left">Paul C</span><span class="middle">o</span
+      ><span class="right">togno</span>
+      <!--<span style="transitiondelay: 0s; color: #bbbbbb">Paul Cotogno</span>
       <span style="transitiondelay: 0.06s; color: #bcbcbc">Paul Cotogno</span>
       <span style="transitiondelay: 0.02s; color: #cccccc">Paul Cotogno</span>
       <span style="transitiondelay: 0.06s; color: #cdcdcd">Paul Cotogno</span>
@@ -19,39 +21,37 @@
       <span style="transitiondelay: 0.06s; color: #dedede">Paul Cotogno</span>
       <span style="transitiondelay: 0.06s; color: #eeeeee">Paul Cotogno</span>
       <span style="transitiondelay: 0.06s; color: #efefef">Paul Cotogno</span>
-      <span style="transitiondelay: 0.08s; color: #ffffff">Paul Cotogno</span>
+      <span style="transitiondelay: 0.08s; color: #ffffff">Paul Cotogno</span>-->
     </h1>
-    <div class="renderer_wrapper">
-      <div id="renderer"></div>
-      <div class="nav_down">
-        <h2 class="downright"><a href="#">@Instagram</a></h2>
-        <h2 class="downright">
-          <a href="https://www.behance.net/PaulCotogno">@Behance</a>
-        </h2>
-      </div>
-      <div class="home_wrapper">
-        <div class="white-blend"></div>
-      </div>
-      <ProjectsHome
-        v-for="{ title, imagePath, projectType, color, id } in data"
-        :key="title"
-        :title="title"
-        :imagePath="imagePath"
-        :id="id"
-        class="page_components"
-        @mouseenter="hover(title, imagePath, projectType, color)"
-        @mouseleave="leave"
-        @click="this.visible"
-      />
-      <TextHover
-        ref="texthover"
-        :title="this.title_projet"
-        :imagePath="this.imagePath_projet"
-        :projectType="this.projectType"
-        :initialVisible="this.textHoverVisible"
-      />
+    <div id="renderer"></div>
+    <div class="nav_down">
+      <h2 class="downright"><a href="#">@Instagram</a></h2>
+      <h2 class="downright">
+        <a href="https://www.behance.net/PaulCotogno">@Behance</a>
+      </h2>
     </div>
-    <component :is="this.componentVisible" v-show="false" />
+    <div class="home_wrapper">
+      <div class="white-blend"></div>
+    </div>
+    <ProjectsHome
+      v-for="{ title, imagePath, projectType, color, id } in data"
+      :key="title"
+      :title="title"
+      :imagePath="imagePath"
+      :id="id"
+      class="page_components"
+      @mouseenter="hover(title, imagePath, projectType, color)"
+      @mouseleave="leave"
+      @click="this.visible"
+    />
+    <TextHover
+      ref="texthover"
+      :title="this.title_projet"
+      :imagePath="this.imagePath_projet"
+      :projectType="this.projectType"
+      :initialVisible="this.textHoverVisible"
+    />
+    <footer></footer>
   </div>
 </template>
 
@@ -87,7 +87,7 @@ export default {
       currentPos: window.pageYOffset,
       color: 0xffffff,
       varScroll: 0.5,
-      BallSize: 10,
+      BallSize: 0.15,
       visible: false,
       mouse: { x: "", y: "" },
       meshReact: "",
@@ -117,7 +117,7 @@ export default {
 
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.setSize(container.clientWidth, container.clientHeight);
-      this.renderer.setClearColor(0x020202, 1);
+      this.renderer.setClearColor(0x030303, 1);
       container.appendChild(this.renderer.domElement);
 
       ///////////
@@ -137,26 +137,108 @@ export default {
       scene.add(this.light);
 
       ////////////////////////////////
+      //////////EnvMap////////////////
+      ////////////////////////////////
+
+      var loader = new THREE.CubeTextureLoader();
+      loader.setCrossOrigin("");
+      loader.setPath(
+        "textures/2/"
+      );
+
+      var cubeTexture = loader.load([
+        "px.png",
+        "nx.png",
+        "py.png",
+        "ny.png",
+        "pz.png",
+        "nz.png",
+      ]);
+
+      ////////////////////////////////
       ///////////sphere/////////////
       ////////////////////////////////
 
-      this.material = new THREE.MeshNormalMaterial({
-        wireframe: false,
-      });
-      this.sphere = new THREE.Mesh(
-        new THREE.SphereGeometry(10, 100, 100),
-        this.material
-      );
+      var cols = [
+        {
+          stop: 0,
+          color: new THREE.Color(0x000000),
+        },
+        {
+          stop: 1,
+          color: new THREE.Color(0x000000),
+        },
+      ];
 
+      var geom = new THREE.SphereGeometry(4, 70, 70);
+
+      var rev = true;
+
+      this.setGradient(geom, cols, "z", rev);
+
+      var mat = new THREE.MeshPhysicalMaterial({
+        vertexColors: THREE.VertexColors,
+        envMap: cubeTexture,
+        wireframe: false,
+        roughness : 0.3,
+        metalness: 1,
+        reflectivity: 1,
+        clearcoat : 0.5,
+        clearcoatRoughness: 0.05,
+        transparent: true,
+        opacity: 1,
+        side: 2
+      });
+      this.sphere = new THREE.Mesh(geom, mat);
+      //this.sphere.material.envMap.mapping = THREE.CubeRefractionMapping;
       scene.add(this.sphere);
+    },
+    setGradient(geometry, colors, axis, reverse) {
+      geometry.computeBoundingBox();
+
+      var bbox = geometry.boundingBox;
+      var size = new THREE.Vector3().subVectors(bbox.max, bbox.min);
+
+      var vertexIndices = ["a", "b", "c"];
+      var face,
+        vertex,
+        normalized = new THREE.Vector3(),
+        normalizedAxis = 0;
+
+      for (var c = 0; c < colors.length - 1; c++) {
+        var colorDiff = colors[c + 1].stop - colors[c].stop;
+
+        for (var i = 0; i < geometry.faces.length; i++) {
+          face = geometry.faces[i];
+          for (var v = 0; v < 3; v++) {
+            vertex = geometry.vertices[face[vertexIndices[v]]];
+            normalizedAxis = normalized
+              .subVectors(vertex, bbox.min)
+              .divide(size)[axis];
+            if (reverse) {
+              normalizedAxis = 1 - normalizedAxis;
+            }
+            if (
+              normalizedAxis >= colors[c].stop &&
+              normalizedAxis <= colors[c + 1].stop
+            ) {
+              var localNormalizedAxis =
+                (normalizedAxis - colors[c].stop) / colorDiff;
+              face.vertexColors[v] = colors[c].color
+                .clone()
+                .lerp(colors[c + 1].color, localNormalizedAxis);
+            }
+          }
+        }
+      }
     },
     amountNoiseDistord() {
       var newPos = window.pageYOffset;
       const diff = Math.abs(newPos - this.currentPos);
       if (diff < 100) {
-        this.speed = diff * 0.001 + 0.05;
+        this.speed = diff * 0.002 + 0.05;
       } else if (diff > 100) {
-        this.speed = 0.15;
+        this.speed = 0.20;
       }
       this.currentPos = newPos;
     },
@@ -186,7 +268,6 @@ export default {
     animate: function () {
       requestAnimationFrame(this.animate);
       //this.sphere.rotation.y += 0.008;
-      this.material.color = new THREE.Color(this.color);
       this.update();
       this.amountNoiseDistord();
       this.renderer.render(scene, this.camera);
@@ -196,7 +277,7 @@ export default {
 
       var k = 1;
       //noise.seed(Math.random());
-      this.sphere.geometry.radius = +4;
+      this.sphere.geometry.radius = +2;
       var timeV = performance.now() * 0.003;
       //var value = noise.perlin3(p.x * k + time, p.y * k, p.z * k);
       for (var i = 0; i < this.sphere.geometry.vertices.length; i++) {
@@ -223,22 +304,32 @@ export default {
         pos.x = (m.x / window.innerWidth) * 2 - 1;
         pos.y = ((m.y / window.innerHeight) * 2 - 2) * -1;
 
-        this.directionalLight.target.position.set(pos.x, pos.y, 0.5);
+        //this.directionalLight.target.position.set(pos.x, pos.y, 0.5);
 
-        this.sphere.rotation.x = pos.x;
-        this.sphere.rotation.z = pos.y;
+        this.sphere.rotation.x = pos.x * 2;
+        this.sphere.rotation.z = pos.y * 2;
       });
 
       window.addEventListener("scroll", () => {
         this.varScroll =
           (window.scrollY + window.innerHeight) / (window.innerHeight * 2);
+
+        this.sphere.rotation.y = window.pageYOffset / 700;
+
+        this.scrollValSphere = window.pageYOffset / 1000 / 1.5 + 0.15;
+
+        if (this.scrollValSphere <= 0.3) {
+          this.BallSize = this.scrollValSphere;
+        } else {
+          this.BallSize = 0.3;
+        }
       });
     },
     responsiveValueCheck() {
       if (window.innerWidth < 500) {
-        this.BallSize = 0.25;
+        //this.BallSize = 0.15;
       } else {
-        this.BallSize = 0.45;
+        //this.BallSize = 0.25;
       }
     },
     windowResizeCheck() {
@@ -299,7 +390,25 @@ export default {
     this.animInteract();
     this.responsiveValueCheck();
     this.windowResizeCheck();
-    this.animateHomeTitle();
+    //this.animateHomeTitle();
+
+    var o = document.querySelector("h1>span.middle");
+
+    o.animate(
+      [
+        { transform: "rotate(90deg)", opacity: "1", margin: "0 300px" },
+        { transform: "rotate(90deg)", opacity: "1", margin: "0 300px" },
+        { transform: "rotate(90deg)", opacity: "1", margin: "0 300px" },
+        { transform: "rotate(90deg)", opacity: "1", margin: "0 300px" },
+        { transform: "rotate(0)", fontSize: "10em", margin: "0 300px" },
+        { fontSize: "inherit", margin: "0 0" },
+      ],
+      {
+        duration: 2000,
+        easing: "ease",
+        fill: "forwards",
+      }
+    );
   },
 };
 </script>
@@ -317,6 +426,7 @@ export default {
   text-align: center;
   font-family: "Pano";
   font-size: 0.7em;
+  padding-top: 0.5em;
   .nav_wrapper {
     width: 100%;
     display: flex;
@@ -364,8 +474,16 @@ export default {
     left: 50%;
     top: 50vh;
     transform: translate(-50%, -50%);
-    color: #b2b2b2;
+    color: #fff;
+    display: flex;
+    align-items: center;
     span {
+      transition: all 1s ease;
+      &.middle {
+        font-size: 10em;
+      }
+    }
+    /*span {
       position: absolute;
       transition: all 0.2s ease;
       width: max-content;
@@ -373,7 +491,7 @@ export default {
       top: 0;
       transform: translate(-50%, 0);
       color: rgb(255, 255, 255);
-    }
+    }*/
   }
   .nav_down {
     position: fixed;
@@ -391,7 +509,7 @@ export default {
     }
   }
   .home_wrapper {
-    height: 30vh;
+    height: 100vh;
     width: 100vw;
   }
   .page_components {
@@ -427,20 +545,17 @@ export default {
     }
   }
 }
-.renderer_wrapper {
-  margin-bottom: 40vh;
-}
 #renderer {
   width: 100vw;
   height: 100vh;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
   z-index: -2;
 }
 body {
   margin: 0;
   width: 100vw;
-  background: #020202;
   color: #f3f3f3;
   overflow-x: hidden;
   scroll-behavior: smooth;
