@@ -7,7 +7,7 @@ module.exports = {
                 return args;
             })
     },
-    publicPath: './',
+    publicPath: '/',
     configureWebpack: {
         output: {
             libraryExport: 'default'
@@ -16,7 +16,7 @@ module.exports = {
     css: {
         loaderOptions: {
             scss: {
-                additionalData: `
+                data: `
             @import "@/assets/scss/_variables.scss";
           `
             }

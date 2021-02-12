@@ -1,0 +1,64 @@
+
+
+[
+    {
+      "id": 0,
+      "title": "seo-elp",
+      "link": "SeoElp",
+      "imagePath": "project_seoelp.png",
+      "imageLink": "SeoElp/1.png",
+      "projectType": "Student Project",
+      "resume":
+        "Design et Developpement de la Landing Page d’un projet en VueJs sur une plateforme de E-learning sur le SEO dirigé par un commanditaire.",
+      "color": "3d54d9",
+      "colorRGB": "61,84,217",
+      "webSiteLink": "http://seo-elp.fr/",
+      "category": ["Developpement", "Design", "Group Workflow"],
+      "technology": ["VueCLI", "JavaScript", "RellaxJs", "EmailJs"]
+    },
+    {
+      "id": 1,
+      "title": "t.malick",
+      "link": "TerrenceMalick",
+      "imagePath": "project_terrencemalick.png",
+      "imageLink": "Boss/1.png",
+      "projectType": "Student Project",
+      "resume":
+        "Conception et Developpement d’un site web en VueJs sur un sujet donné en 16h.",
+      "color": "061512",
+      "colorRGB": "6,21,18",
+      "webSiteLink": "http://www.boss.paulcotogno.com/",
+      "category": ["Developpement", "Design", "Fast Deadlines"],
+      "technology": ["VueCLI", "Php", "JavaScript"]
+    },
+    {
+      "id": 2,
+      "title": "alias",
+      "link": "Alias",
+      "imagePath": "project_alias.png",
+      "imageLink": "Alias/1.png",
+      "projectType": "Personal Project",
+      "resume":
+        "Réalisation d'un site vitrine pour un design que j'ai créé pour un concours de design de vétements",
+      "color": "fcff2a",
+      "colorRGB": "212,215,2",
+      "webSiteLink": "http://www.alias.paulcotogno.com/",
+      "category": ["Developpement", "Design", "3D Integration"],
+      "technology": ["ThreeJs", "JavaScript"]
+    },
+    {
+      "id": 3,
+      "title": "the dots",
+      "link": "TheDots",
+      "imagePath": "project_thedots.png",
+      "imageLink": "TheDots/1.png",
+      "projectType": "Student Project",
+      "resume":
+        "Recherche, design et développement de la partie FrontEnd et BackEnd d’un site web visant à aider les entreprises à augmenter leur crédibilité avec leur passé.",
+      "color": "730800",
+      "colorRGB": "115,8,0",
+      "webSiteLink": "http://www.thedots.paulcotogno.com/",
+      "category": ["Developpement", "Design", "Group Workflow"],
+      "technology": ["JavaScript", "Php"]
+    }
+  ]

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+   <element>
+      <category>
+         <element>Developpement</element>
+         <element>Design</element>
+         <element>Group Workflow</element>
+      </category>
+      <color>#3d54d9</color>
+      <colorRGB>61,84,217</colorRGB>
+      <id>0</id>
+      <imageLink>SeoElp/1.png</imageLink>
+      <imagePath>project_seoelp.png</imagePath>
+      <link>SeoElp</link>
+      <projectType>Student Project</projectType>
+      <resume>Design et Developpement de la Landing Page d’un projet en VueJs sur une plateforme de E-learning sur le SEO dirigé par un commanditaire.</resume>
+      <technology>
+         <element>VueCLI</element>
+         <element>JavaScript</element>
+         <element>RellaxJs</element>
+         <element>EmailJs</element>
+      </technology>
+      <title>seo-elp</title>
+      <webSiteLink>http://seo-elp.fr/</webSiteLink>
+   </element>
+   <element>
+      <category>
+         <element>Developpement</element>
+         <element>Design</element>
+         <element>Fast Deadlines</element>
+      </category>
+      <color>#061512</color>
+      <colorRGB>6,21,18</colorRGB>
+      <id>1</id>
+      <imageLink>Boss/1.png</imageLink>
+      <imagePath>project_terrencemalick.png</imagePath>
+      <link>TerrenceMalick</link>
+      <projectType>Student Project</projectType>
+      <resume>Conception et Developpement d’un site web en VueJs sur un sujet donné en 16h.</resume>
+      <technology>
+         <element>VueCLI</element>
+         <element>Php</element>
+         <element>JavaScript</element>
+      </technology>
+      <title>t.malick</title>
+      <webSiteLink>http://www.boss.paulcotogno.com/</webSiteLink>
+   </element>
+   <element>
+      <category>
+         <element>Developpement</element>
+         <element>Design</element>
+         <element>3D Integration</element>
+      </category>
+      <color>#fcff2a</color>
+      <colorRGB>252,255,42</colorRGB>
+      <id>2</id>
+      <imageLink>Alias/1.png</imageLink>
+      <imagePath>project_alias.png</imagePath>
+      <link>Alias</link>
+      <projectType>Personal Project</projectType>
+      <resume>Réalisation d'un site vitrine pour un design que j'ai créé pour un concours de design de vétements</resume>
+      <technology>
+         <element>ThreeJs</element>
+         <element>JavaScript</element>
+      </technology>
+      <title>alias</title>
+      <webSiteLink>http://www.alias.paulcotogno.com/</webSiteLink>
+   </element>
+   <element>
+      <category>
+         <element>Developpement</element>
+         <element>Design</element>
+         <element>Group Workflow</element>
+      </category>
+      <color>#730800</color>
+      <colorRGB>115,8,0</colorRGB>
+      <id>3</id>
+      <imageLin>TheDots/1.png</imageLin>
+      <imagePath>project_thedots.png</imagePath>
+      <link>TheDots</link>
+      <projectType>Student Project</projectType>
+      <resume>Recherche, design et développement de la partie FrontEnd et BackEnd d’un site web visant à aider les entreprises à augmenter leur crédibilité avec leur passé.</resume>
+      <technology>
+         <element>JavaScript</element>
+         <element>Php</element>
+      </technology>
+      <title>the dots</title>
+      <webSiteLink>http://www.thedots.paulcotogno.com/</webSiteLink>
+   </element>
+</root>

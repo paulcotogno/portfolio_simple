@@ -30,28 +30,31 @@
         <a href="https://www.behance.net/PaulCotogno">@Behance</a>
       </h2>
     </div>
-    <div class="home_wrapper">
-      <div class="white-blend"></div>
+    <div class="home_wrapper"></div>
+
+    <div id="project_wrapper_column">
+      <div id="project_wrapper_row">
+        <div id="project_wrapper">
+          <ProjectsHome
+            v-for="{ title, imagePath, id } in data"
+            :key="title"
+            :title="title"
+            :imagePath="imagePath"
+            :id="id"
+            class="page_components"
+            @click="this.visible"
+          />
+        </div>
+      </div>
     </div>
-    <ProjectsHome
-      v-for="{ title, imagePath, projectType, color, id } in data"
-      :key="title"
-      :title="title"
-      :imagePath="imagePath"
-      :id="id"
-      class="page_components"
-      @mouseenter="hover(title, imagePath, projectType, color)"
-      @mouseleave="leave"
-      @click="this.visible"
-    />
     <TextHover
       ref="texthover"
       :title="this.title_projet"
       :imagePath="this.imagePath_projet"
       :projectType="this.projectType"
       :initialVisible="this.textHoverVisible"
+      :id="this.id_project"
     />
-    <footer></footer>
   </div>
 </template>
 
@@ -64,7 +67,9 @@ import VueBlotter from "vue-blotter";
 //import * as THREE from "three";
 import { Noise } from "noisejs";
 
-let mesh, scene;
+let mesh,
+  scene,
+  oldValue = 0;
 
 export default {
   components: {
@@ -85,7 +90,7 @@ export default {
       amountNoise: "0.07",
       speed: "0.02",
       currentPos: window.pageYOffset,
-      color: 0xffffff,
+      color: 0x000000,
       varScroll: 0.5,
       BallSize: 0.15,
       visible: false,
@@ -127,7 +132,7 @@ export default {
       this.light = new THREE.AmbientLight(0x090909); // soft white light
 
       this.directionalLight = new THREE.DirectionalLight(0xffffff, 1.4);
-      this.directionalLight.position.set(0, 1, 1);
+      this.directionalLight.position.set(0, 3, -10);
       this.directionalLight.target.position.set(0, 0, 0);
       scene.add(this.directionalLight.target);
       scene.add(this.directionalLight);
@@ -142,9 +147,7 @@ export default {
 
       var loader = new THREE.CubeTextureLoader();
       loader.setCrossOrigin("");
-      loader.setPath(
-        "textures/2/"
-      );
+      loader.setPath("textures/");
 
       var cubeTexture = loader.load([
         "px.png",
@@ -154,6 +157,13 @@ export default {
         "pz.png",
         "nz.png",
       ]);
+
+      this.thedotsTexture = new THREE.TextureLoader().load(
+        "textures/project_alias.png"
+      );
+      this.thedotsTexture.wrapS = THREE.RepeatWrapping;
+      this.thedotsTexture.wrapT = THREE.RepeatWrapping;
+      this.thedotsTexture.repeat.set(4, 4);
 
       ////////////////////////////////
       ///////////sphere/////////////
@@ -177,17 +187,18 @@ export default {
       this.setGradient(geom, cols, "z", rev);
 
       var mat = new THREE.MeshPhysicalMaterial({
-        vertexColors: THREE.VertexColors,
+        //vertexColors: THREE.VertexColors,
+        color: 0x000000,
         envMap: cubeTexture,
         wireframe: false,
-        roughness : 0.3,
+        roughness: 0.3,
         metalness: 1,
         reflectivity: 1,
-        clearcoat : 0.5,
+        clearcoat: 0.5,
         clearcoatRoughness: 0.05,
         transparent: true,
         opacity: 1,
-        side: 2
+        side: 2,
       });
       this.sphere = new THREE.Mesh(geom, mat);
       //this.sphere.material.envMap.mapping = THREE.CubeRefractionMapping;
@@ -238,38 +249,67 @@ export default {
       if (diff < 100) {
         this.speed = diff * 0.002 + 0.05;
       } else if (diff > 100) {
-        this.speed = 0.20;
+        this.speed = 0.2;
       }
       this.currentPos = newPos;
     },
-    hover(title, path, type, color) {
-      this.projectHover = event.target;
-      if (this.projectHover.classList.contains("page_components")) {
-        //this.projectHover.style.transform = "scale(1.05)";
-        //this.projectHover.style.backgroundSize = "110%";
-        this.projectHover.style.filter = "grayscale(0%)";
-      }
-      this.color = color;
-      //this.material.wireframe = false;
-      this.title_projet = title;
-      this.imagePath_projet = path;
-      this.texture = new THREE.TextureLoader().load("img/" + path);
-      this.projectType = type;
-      this.$refs.texthover.show();
-    },
-    leave() {
-      //this.material.wireframe = true;
-      this.projectHover.style.filter = "grayscale(100%)";
-      this.$refs.texthover.hide();
-      this.color = 0xffffff;
-      //this.projectHover.style.transform = "scale(1)";
-      //this.projectHover.style.backgroundSize = "contain";
+    scrollProject() {
+      var pwcol = document.getElementById("project_wrapper_column"),
+        pwrow = document.getElementById("project_wrapper_row"),
+        pw = document.getElementById("project_wrapper");
+
+      document.addEventListener("scroll", () => {
+        var scrollprojectval =
+          ((pwrow.offsetTop + pwrow.offsetHeight) /
+            (pwcol.offsetTop + pwcol.offsetHeight) -
+            0.5) *
+          2;
+
+        var valProject = parseInt(scrollprojectval * 4);
+
+        if (valProject >= 0 && valProject <= 3) {
+          pw.style.transform = "translateX(-" + valProject * 100 + "vw)";
+        }
+        if (valProject > 3) {
+          pw.style.transform = "translateX(-300vw)";
+        }
+
+        if (scrollprojectval > 0 && scrollprojectval < 1) {
+          var dataProjectGet = this.data[valProject];
+
+          this.color = "0x" + dataProjectGet.color;
+          this.title_projet = dataProjectGet.title;
+          this.imagePath_projet = dataProjectGet.imagePath;
+          this.projectType = dataProjectGet.projectType;
+          this.id_project = dataProjectGet.id;
+          document.getElementById(valProject).style.filter = "grayscale(0%)";
+
+          this.sphere.position.x = 1;
+
+          //scene.background = this.thedotsTexture;
+
+          if (valProject != oldValue) {
+            //this.$refs.texthover.hide();
+            document.getElementById(oldValue).style.filter = "grayscale(100%)";
+          } else {
+            //this.$refs.texthover.show();
+          }
+
+          oldValue = valProject;
+        } else {
+          //this.$refs.texthover.hide();  
+          this.color = "0x000000";
+          this.sphere.position.x = 0;
+          //scene.background = 0x030303;
+        }
+      });
     },
     animate: function () {
       requestAnimationFrame(this.animate);
       //this.sphere.rotation.y += 0.008;
       this.update();
       this.amountNoiseDistord();
+
       this.renderer.render(scene, this.camera);
     },
     update() {
@@ -289,6 +329,8 @@ export default {
         );
       }
 
+      this.sphere.material.color.setHex(this.color);
+
       this.sphere.geometry.computeVertexNormals();
       this.sphere.geometry.normalsNeedUpdate = true;
       this.sphere.geometry.verticesNeedUpdate = true;
@@ -306,8 +348,10 @@ export default {
 
         //this.directionalLight.target.position.set(pos.x, pos.y, 0.5);
 
-        this.sphere.rotation.x = pos.x * 2;
-        this.sphere.rotation.z = pos.y * 2;
+        this.camera.rotationX = pos.x * 2;
+        this.camera.rotationY = pos.y * 2;
+
+        this.thedotsTexture.rotationX = THREE.Math.degToRad(90);
       });
 
       window.addEventListener("scroll", () => {
@@ -390,25 +434,7 @@ export default {
     this.animInteract();
     this.responsiveValueCheck();
     this.windowResizeCheck();
-    //this.animateHomeTitle();
-
-    var o = document.querySelector("h1>span.middle");
-
-    o.animate(
-      [
-        { transform: "rotate(90deg)", opacity: "1", margin: "0 300px" },
-        { transform: "rotate(90deg)", opacity: "1", margin: "0 300px" },
-        { transform: "rotate(90deg)", opacity: "1", margin: "0 300px" },
-        { transform: "rotate(90deg)", opacity: "1", margin: "0 300px" },
-        { transform: "rotate(0)", fontSize: "10em", margin: "0 300px" },
-        { fontSize: "inherit", margin: "0 0" },
-      ],
-      {
-        duration: 2000,
-        easing: "ease",
-        fill: "forwards",
-      }
-    );
+    this.scrollProject();
   },
 };
 </script>
@@ -419,18 +445,41 @@ export default {
   width: 100vw;
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   font-family: "Pano";
-  font-size: 0.7em;
-  padding-top: 0.5em;
+  font-size: 1.7vh;
+  @include sm {
+    padding-top: 0.7em;
+    .nav_wrapper {
+      #title {
+        a {
+          img {
+            height: 13px;
+          }
+        }
+      }
+    }
+  }
+  @include lg {
+    padding-top: 0.5em;
+    .nav_wrapper {
+      #title {
+        a {
+          img {
+            height: 20px;
+          }
+        }
+      }
+    }
+  }
   .nav_wrapper {
     width: 100%;
     display: flex;
-    padding: 1% 4%;
+    padding: 1% 3%;
     align-items: center;
     justify-content: space-between;
     text-align: center;
@@ -443,20 +492,6 @@ export default {
         text-decoration: none;
       }
     }
-    #title {
-      a {
-        img {
-          height: 20px;
-        }
-      }
-    }
-    h2 {
-      width: fit-content;
-      a {
-        font-weight: 300;
-        color: white;
-      }
-    }
   }
 }
 .home_page {
@@ -464,13 +499,24 @@ export default {
   justify-content: space-evenly;
   align-items: center;
   flex-direction: column;
+  width: 100vw;
+  @include sm {
+    .nav_down {
+      display: none;
+    }
+  }
+  @include md {
+    .nav_down {
+      display: block;
+    }
+  }
   h1 {
     position: absolute;
     text-align: center;
     margin: 0 auto;
     width: max-content;
-    font-size: 4.2em;
     text-transform: uppercase;
+    font-size: 4vw;
     left: 50%;
     top: 50vh;
     transform: translate(-50%, -50%);
@@ -478,9 +524,9 @@ export default {
     display: flex;
     align-items: center;
     span {
-      transition: all 1s ease;
+      transition: all 0.2s ease;
       &.middle {
-        font-size: 10em;
+        animation: example 2s ease forwards;
       }
     }
     /*span {
@@ -501,7 +547,6 @@ export default {
     h2 {
       text-align: right;
       font-family: "Pano";
-      font-size: 1em;
       font-weight: 300;
       a {
         color: white;
@@ -511,38 +556,6 @@ export default {
   .home_wrapper {
     height: 100vh;
     width: 100vw;
-  }
-  .page_components {
-    &::after {
-      position: absolute;
-      top: 30px;
-      left: 30px;
-      width: 40vw;
-      height: 3px;
-      display: block;
-      background: white;
-    }
-    margin: 3% 5%;
-    transition: all 0.1s ease;
-    -moz-transition: background-size 2s ease;
-    -ms-transition: background-size 4s ease;
-    -o-transition: background-size 4s ease;
-    -webkit-transition: background-size 4s ease;
-    padding: 0;
-    align-self: flex-start;
-    height: fit-content;
-    background: none;
-    width: 15vw;
-    height: 15vw;
-    background-position: center;
-    background-size: contain;
-    filter: grayscale(100%);
-    cursor: pointer;
-    a {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
   }
 }
 #renderer {
@@ -560,32 +573,26 @@ body {
   overflow-x: hidden;
   scroll-behavior: smooth;
 }
-#text_hover_wrapper {
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  font-size: 4em;
-  text-transform: uppercase;
-  position: fixed;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: -1;
-  background-color: rgba($color: #030303, $alpha: 0.5);
-  .text_wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    p {
-      width: max-content;
-      text-align: center;
-      margin: 0;
-      height: 45px;
-      font-family: "Monument";
-      span {
-        color: rgba($color: #808080, $alpha: 1);
-      }
-    }
+
+@keyframes example {
+  from {
+    transform: rotate(90deg);
+    opacity: 0;
+    margin: 0 500px;
+  }
+  39% {
+    transform: rotate(90deg);
+    opacity: 1;
+    margin: 0 500px;
+  }
+  50% {
+    transform: rotate(0);
+    font-size: 80vh;
+    margin: 0 500px;
+  }
+  to {
+    font-size: inherit;
+    margin: 0 0;
   }
 }
 </style>

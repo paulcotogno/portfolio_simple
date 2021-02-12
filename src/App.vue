@@ -9,51 +9,15 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
-      data: [
-        {
-          id: 0,
-          title: "seo-elp",
-          link: "SeoElp",
-          imagePath: "project_seoelp.png",
-          projectType: "Student Project",
-          color: "#3d54d9",
-          webSiteLink: "http://seo-elp.fr/",
-          category: ["Developpement", "Design", "Group Workflow"],
-        },
-        {
-          id: 1,
-          title: "terrence malick",
-          link: "TerrenceMalick",
-          imagePath: "project_terrencemalick.png",
-          projectType: "Student Project",
-          color: "#061512",
-          webSiteLink: "http://www.boss.paulcotogno.com/",
-          category: ["Developpement", "Design", "Fast Deadlines"],
-        },
-        {
-          id: 2,
-          title: "alias",
-          link: "Alias",
-          imagePath: "project_alias.png",
-          projectType: "Personal Project",
-          color: "#fcff2a",
-          webSiteLink: "http://www.alias.paulcotogno.com/",
-          category: ["Developpement", "Design", "3D Integration"],
-        },
-        {
-          id: 3,
-          title: "the dots",
-          link: "TheDots",
-          imagePath: "project_thedots.png",
-          projectType: "Student Project",
-          color: "#730800",
-          webSiteLink: "http://www.thedots.paulcotogno.com/",
-          category: ["Developpement", "Design", "Group Workflow"],
-        },
-      ],
+      publicPath: process.env.BASE_URL,
+      data: {
+        data: [],
+      },
     };
   },
   mounted() {
@@ -70,6 +34,18 @@ export default {
         document.getElementById("scrollBar").style.marginLeft = "0%";
       }
     });
+
+    axios
+      .get("data.json")
+      .then(
+        function (response) {
+          console.log(response.data);
+          this.data = response.data;
+        }.bind(this)
+      )
+      .catch(function (error) {
+        console.log(error);
+      });
   },
 };
 </script>
@@ -94,13 +70,38 @@ export default {
 
 @import url("https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap");
 
-html{
+html {
   background: #030303;
+  scroll-behavior: smooth;
 }
 
 h1 {
   font-family: "Pano";
   font-weight: 800;
+}
+
+@include sm {
+  h1 {
+    font-size: 2em;
+  }
+  p,
+  ul,
+  li,
+  a {
+    font-size: 0.8em;
+  }
+}
+
+@include md {
+  h1 {
+    font-size: 2em;
+  }
+  p,
+  ul,
+  li,
+  a {
+    font-size: 0.8em;
+  }
 }
 
 p,
@@ -115,22 +116,25 @@ a {
   p {
     text-align: center;
     font-weight: 300;
-    font-size: 11px;
     font-family: "JetBrains Mono", monospace;
   }
-  height: 40vh;
   width: 100vw;
   backdrop-filter: blur(10em);
   margin-top: 20vh;
 }
 .scrollBar_wrapper {
   min-width: 100vw;
-  height: 0.3em;
   position: fixed;
   top: 0;
   left: 0;
   display: flex;
   z-index: 10;
+  @include sm {
+    height: 0.2em;
+  }
+  @include md {
+    height: 0.3em;
+  }
 }
 
 #scrollBar {
@@ -141,9 +145,9 @@ a {
   background: rgb(131, 58, 180);
   background: linear-gradient(
     90deg,
-    rgba(#FEAC5E, 1) 0%,
-    rgba(#C779D0, 1) 50%,
-    rgba(#4BC0C8, 1) 100%
+    rgba(#feac5e, 1) 0%,
+    rgba(#c779d0, 1) 50%,
+    rgba(#4bc0c8, 1) 100%
   );
   transition: margin 0.2s ease;
 }

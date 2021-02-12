@@ -8,11 +8,13 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "blotter": "^2.1.0",
     "core-js": "^3.6.5",
-    "node-sass": "^5.0.0",
+    "emailjs-com": "^2.6.4",
+    "node-sass": "^4.14.1",
     "noisejs": "^2.1.0",
-    "sass-loader": "^10.1.0",
+    "sass-loader": "^7.1.0",
     "three.js": "^0.77.1",
     "vue": "^3.0.0",
     "vue-blotter": "^0.1.3",
