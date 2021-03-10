@@ -90,6 +90,7 @@ export default {
 }
 
 #text_hover_wrapper {
+  opacity: 0;
   top: 0;
   width: 100vw;
   height: 100vh;
@@ -101,7 +102,7 @@ export default {
   align-items: center;
   z-index: -1;
   a{
-    color: white;
+    color: #898989;
     text-decoration: none;
   }
   //background-color: rgba($color: #030303, $alpha: 0.5);

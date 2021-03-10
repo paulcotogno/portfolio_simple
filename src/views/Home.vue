@@ -1,15 +1,15 @@
 <template>
-  <div id="nav">
-    <div class="nav_wrapper">
-      <h2 id="title">
-        <router-link to="/"
-          ><img src="@/assets/img/logo.svg" alt=""
-        /></router-link>
-      </h2>
-      <h2><router-link to="/about">Contact</router-link></h2>
-    </div>
-  </div>
   <div id="home_page" class="home_page">
+    <div id="nav">
+      <div class="nav_wrapper">
+        <h2 id="title">
+          <router-link to="/"
+            ><img id="img_nav" src="@/assets/img/logo.svg" alt=""
+          /></router-link>
+        </h2>
+        <h2><router-link to="/about" id="a_contact">Contact</router-link></h2>
+      </div>
+    </div>
     <h1 ref="titre">
       <span class="left">Paul C</span><span class="middle">o</span
       ><span class="right">togno</span>
@@ -31,14 +31,13 @@
       </h2>
     </div>
     <div class="home_wrapper"></div>
-
     <div id="project_wrapper_column">
       <div id="project_wrapper_row">
         <div id="project_wrapper">
           <ProjectsHome
-            v-for="{ title, imagePath, id } in data"
+            v-for="{ title, imagePath, id, titleBr } in data"
             :key="title"
-            :title="title"
+            :title="titleBr"
             :imagePath="imagePath"
             :id="id"
             class="page_components"
@@ -55,6 +54,7 @@
       :initialVisible="this.textHoverVisible"
       :id="this.id_project"
     />
+    <Galery />
   </div>
 </template>
 
@@ -62,6 +62,7 @@
 import ProjectsHome from "@/components/Projects-Home";
 import TextHover from "@/components/TextHoverWrapper";
 import Galery from "@/components/Galery";
+//import SeoElpProject from "../components/SeoElpProject.vue";
 
 import VueBlotter from "vue-blotter";
 //import * as THREE from "three";
@@ -77,16 +78,17 @@ export default {
     TextHover,
     VueBlotter,
     Galery,
+    //SeoElpProject,
   },
-  data: function () {
+  data: function SeoElpProject() {
     return {
-      title_projet: "default",
-      imagePath_projet: "project_seoelp.png",
-      projectType: "default",
+      title_projet: "",
+      imagePath_projet: "",
+      projectType: "",
       textHoverVisible: false,
-      componentVisible: "ProjetSeoElp",
+      componentVisible: "",
       projectHover: "",
-      texture: "project_seoelp.png",
+      texture: "",
       amountNoise: "0.07",
       speed: "0.02",
       currentPos: window.pageYOffset,
@@ -96,6 +98,7 @@ export default {
       visible: false,
       mouse: { x: "", y: "" },
       meshReact: "",
+      id_project: 0,
     };
   },
   props: {
@@ -157,13 +160,6 @@ export default {
         "pz.png",
         "nz.png",
       ]);
-
-      this.thedotsTexture = new THREE.TextureLoader().load(
-        "textures/project_alias.png"
-      );
-      this.thedotsTexture.wrapS = THREE.RepeatWrapping;
-      this.thedotsTexture.wrapT = THREE.RepeatWrapping;
-      this.thedotsTexture.repeat.set(4, 4);
 
       ////////////////////////////////
       ///////////sphere/////////////
@@ -254,6 +250,23 @@ export default {
       this.currentPos = newPos;
     },
     scrollProject() {
+      var img_nav = document.getElementById("img_nav"),
+        a_contact = document.getElementById("a_contact"),
+        anchor_nav = document.getElementById("project_wrapper_column");
+
+      document.addEventListener("scroll", () => {
+        if (
+          window.pageYOffset > anchor_nav.offsetTop &&
+          window.pageYOffset < anchor_nav.offsetTop + anchor_nav.offsetHeight
+        ) {
+          a_contact.style.color = "black";
+          img_nav.style.filter = "brightness(0)";
+        } else {
+          a_contact.style.color = "white";
+          img_nav.style.filter = "brightness(1)";
+        }
+      });
+
       var pwcol = document.getElementById("project_wrapper_column"),
         pwrow = document.getElementById("project_wrapper_row"),
         pw = document.getElementById("project_wrapper");
@@ -266,41 +279,54 @@ export default {
           2;
 
         var valProject = parseInt(scrollprojectval * 4);
-
-        if (valProject >= 0 && valProject <= 3) {
-          pw.style.transform = "translateX(-" + valProject * 100 + "vw)";
-        }
-        if (valProject > 3) {
-          pw.style.transform = "translateX(-300vw)";
-        }
-
-        if (scrollprojectval > 0 && scrollprojectval < 1) {
-          var dataProjectGet = this.data[valProject];
-
-          this.color = "0x" + dataProjectGet.color;
-          this.title_projet = dataProjectGet.title;
-          this.imagePath_projet = dataProjectGet.imagePath;
-          this.projectType = dataProjectGet.projectType;
-          this.id_project = dataProjectGet.id;
-          document.getElementById(valProject).style.filter = "grayscale(0%)";
-
-          this.sphere.position.x = 1;
-
-          //scene.background = this.thedotsTexture;
-
-          if (valProject != oldValue) {
-            //this.$refs.texthover.hide();
-            document.getElementById(oldValue).style.filter = "grayscale(100%)";
-          } else {
-            //this.$refs.texthover.show();
+        if (pw && document.getElementById("0") && this.$refs.texthover) {
+          if (valProject >= 0 && valProject <= 3 && window.innerWidth <= 768) {
+            pw.style.transform = "translateX(-" + valProject * 100 + "vw)";
+          }
+          if (valProject > 3 && window.innerWidth <= 375) {
+            pw.style.transform = "translateX(-300vw)";
           }
 
-          oldValue = valProject;
-        } else {
-          //this.$refs.texthover.hide();  
-          this.color = "0x000000";
-          this.sphere.position.x = 0;
-          //scene.background = 0x030303;
+          if (scrollprojectval > 0 && scrollprojectval < 1) {
+            var dataProjectGet = this.data[valProject];
+
+            //this.color = "0x" + dataProjectGet.color;
+            this.title_projet = dataProjectGet.title;
+            this.imagePath_projet = dataProjectGet.imagePath;
+            this.projectType = dataProjectGet.projectType;
+            this.id_project = dataProjectGet.id;
+            document.getElementById(valProject).style.filter = "grayscale(0%)";
+            document.getElementById(valProject).classList.add("on");
+
+            if (window.innerHeight > window.innerWidth) {
+              this.sphere.position.y = -0.8;
+            } else {
+              this.sphere.position.x = 0;
+            }
+
+            //scene.background = this.thedotsTexture;
+
+            if (valProject != oldValue) {
+              this.$refs.texthover.hide();
+              document.getElementById(oldValue).style.filter =
+                "grayscale(100%)";
+              document.getElementById(oldValue).classList.remove("on");
+            } else {
+              this.$refs.texthover.show();
+            }
+
+            oldValue = valProject;
+          } else {
+            document.getElementById(oldValue).style.filter = "grayscale(100%)";
+            document.getElementById(oldValue).classList.remove("on");
+            if (this.$refs.texthover) {
+              this.$refs.texthover.hide();
+            }
+            this.color = "0x000000";
+            this.sphere.position.x = 0;
+            this.sphere.position.y = 0;
+            //scene.background = 0x030303;
+          }
         }
       });
     },
@@ -350,8 +376,6 @@ export default {
 
         this.camera.rotationX = pos.x * 2;
         this.camera.rotationY = pos.y * 2;
-
-        this.thedotsTexture.rotationX = THREE.Math.degToRad(90);
       });
 
       window.addEventListener("scroll", () => {
@@ -490,6 +514,10 @@ export default {
       a {
         color: white;
         text-decoration: none;
+        transition: all 0.3s ease;
+      }
+      img {
+        transition: all 0.3s ease;
       }
     }
   }
@@ -544,6 +572,7 @@ export default {
     bottom: 0;
     right: 0;
     padding: 3% 4%;
+    z-index: 5;
     h2 {
       text-align: right;
       font-family: "Pano";

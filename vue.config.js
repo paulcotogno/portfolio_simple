@@ -7,7 +7,8 @@ module.exports = {
                 return args;
             })
     },
-    publicPath: '/',
+    publicPath: process.env.BASE_URL,
+    assetsDir: process.env.BASE_URL,
     configureWebpack: {
         output: {
             libraryExport: 'default'

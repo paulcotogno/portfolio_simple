@@ -1,10 +1,10 @@
 <template>
   <div class="project_wrapper">
-    <div id="nav">
+    <div id="nav" class="nav_projet">
       <div class="nav_wrapper">
         <h1 id="title">
           <a @click.prevent="$router.go(-1)">&#8617;</a>
-          <span>{{ data[$route.params.projetId].title }}</span>
+          <span>{{ data[router].title }}</span>
         </h1>
         <h2><router-link to="/about">Contact</router-link></h2>
       </div>
@@ -12,114 +12,83 @@
     <div
       class="background_wrapper"
       :style="{ backgroundImage: getLinearGradient }"
+      v-scrollanimation
     ></div>
     <div class="project_home">
-      <div class="image_wrapper" id="anchor">
-        <img :src="'/img/' + data[$route.params.projetId].imagePath" alt="" />
-        <div class="text_wrapper">
-          <p>{{ data[$route.params.projetId].projectType }}</p>
-          <h1>{{ data[$route.params.projetId].title }}</h1>
-        </div>
+      <img :src="'/img/' + data[router].imagePath" alt="" />
+      <div class="text_wrapper">
+        <h1>{{ data[router].titleBr }}</h1>
+        <p>{{ data[router].projectType }}</p>
+      </div>
+      <div class="experiences">
+        <p class="FUp">Expériences</p>
+        <ul>
+          <li v-for="cat in data[router].category" :key="cat">
+            {{ cat }}
+          </li>
+        </ul>
+      </div>
+      <div class="technology">
+        <p class="FUp">Technologies utilisées</p>
+        <ul>
+          <li v-for="tech in data[router].technology" :key="tech">
+            {{ tech }}
+          </li>
+        </ul>
       </div>
     </div>
     <div class="content_wrapper">
-      <p class="resume">
-        {{ data[$route.params.projetId].resume }}
-      </p>
-      <div
-        class="link_website"
-        :style="{
-          backgroundImage:
-            'url(/img/' + data[$route.params.projetId].imageLink + ')',
-        }"
-      >
-        <a
-          class="link_wrapper"
-          :href="data[$route.params.projetId].webSiteLink"
-        >
-          <p>Go to the website</p>
-        </a>
+      <div class="content">
+        <p class="resume">
+          {{ data[router].resume }}
+        </p>
+        <div class="link">
+          <a class="link_wrapper" :href="data[router].webSiteLink"
+            >Go to the website <span>&#8640;</span>
+          </a>
+          <a class="link_wrapper" :href="data[router].webSiteLink"
+            >Go to the GitHub <span>&#8640;</span>
+          </a>
+        </div>
+        <div class="textes">
+          <p v-for="texte in data[router].textes" :key="texte">{{ texte }}</p>
+        </div>
+        <div class="images">
+          <div class="image" v-for="image in data[router].images" :key="image">
+            <img :src="image.link" v-if="image.type === '1'">
+            <video :src="image.link" v-if="image.type === '2'"></video>
+          </div>
+        </div>
       </div>
-      <p>Expériences</p>
-      <hr />
-      <ul>
-        <li v-for="cat in data[$route.params.projetId].category" :key="cat">
-          {{ cat }}
-        </li>
-      </ul>
-      <p>Technologies utilisées</p>
-      <hr />
-      <ul>
-        <li v-for="tech in data[$route.params.projetId].technology" :key="tech">
-          {{ tech }}
-        </li>
-      </ul>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
-      dataBind: "",
-      projetId: {
-        type: Number,
-        default: 0,
-      },
+      router: this.$route.params.projetId,
     };
   },
   props: {
-    data: {
-      type: Array,
-    },
-  },
-  methods: {
-    navbar() {
-      window.addEventListener("scroll", () => {
-        let ws = window.pageYOffset;
-        let an = document.getElementById("anchor");
-        let nav = document.getElementById("nav");
-
-        if (an) {
-          if (ws > an.offsetTop + an.offsetHeight - 100) {
-            nav.style.background =
-              "rgba(" +
-              this.data[this.$route.params.projetId].colorRGB +
-              ",0.5)";
-            nav.style.backdropFilter = "blur(2rem)";
-          } else {
-            nav.style.background = "none";
-            nav.style.backdropFilter = "blur(0)";
-          }
-
-          if (ws > an.offsetTop + an.offsetHeight) {
-            document.getElementById("title").classList.add("infos");
-          } else {
-            document.getElementById("title").classList.remove("infos");
-          }
-        }
-      });
-    },
+    title: String,
+    projetId: String,
+    data: Array,
   },
   computed: {
     getLinearGradient() {
       return (
         "linear-gradient(180deg,rgb(" +
-        this.data[this.$route.params.projetId].colorRGB +
+        this.data[this.router].colorRGB +
         ") 1%,rgb(3,3,3) 90%)"
       );
     },
   },
-  props: {
-    data: {
-      type: Array,
-    },
-  },
   mounted() {
-    this.navbar();
-
-    this.projetId = this.$route.params.projetId;
+    console.log(this.data, this.router);
   },
 };
 </script>
@@ -129,6 +98,11 @@ export default {
   background: none;
   backdrop-filter: none;
   transition: all 0.5s ease;
+  &.nav_projet {
+    .nav_wrapper {
+      padding-left: 27vw;
+    }
+  }
   .nav_wrapper {
     h1 {
       margin: 0;
@@ -147,83 +121,141 @@ export default {
     }
   }
 }
-
 .project_wrapper {
-  @include sm {
-    padding: 0 6%;
-    .project_home {
-      .image_wrapper {
-        flex-direction: column;
-        justify-content: space-around;
-        align-items: center;
-        img {
-          margin: 0;
-          width: 50vw;
-        }
-        .text_wrapper {
-          h1 {
-            font-size: 1.2em;
-            text-align: center;
-          }
-          p {
-            font-size: 0.7rem;
-            text-align: center;
-          }
-        }
+  p {
+    font-family: "Montserrat";
+    &.FUp {
+      font-family: "Pano";
+    }
+  }
+  ul {
+    li {
+      font-family: "Montserrat";
+      font-weight: 500;
+    }
+  }
+  display: flex;
+  justify-content: space-between;
+  .project_home {
+    width: 25vw;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    background: rgba($color: #151515, $alpha: 0.3);
+    backdrop-filter: blur(2em);
+    justify-content: flex-start;
+    align-items: flex-start;
+    img {
+      padding: 5%;
+      width: 90%;
+    }
+    .text_wrapper {
+      text-align: center;
+      width: 100%;
+      h1 {
+        font-size: 2.5vw;
+        width: 100%;
+        margin: 20px 0;
+      }
+      p {
+        font-size: 1.3rem;
+        margin: 10px 0;
       }
     }
-    .content_wrapper {
-      padding: 2% 2%;
+    .technology,
+    .experiences {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      p {
+        border-bottom: solid white 2px;
+        margin-bottom: 0;
+        padding-right: 10px;
+        padding-bottom: 10px;
+        white-space: nowrap;
+        text-align: left;
+        padding: 0 0 10px 5%;
+      }
       ul {
-        padding: 0 1%;
+        display: inline-flex;
         flex-direction: column;
-      }
-      .resume {
-        margin-top: 5vh;
-        padding: 0 2px;
-      }
-      .link_website {
-        width: 80%;
-        height: 50px;
+        margin: 10px 5% 0 0;
+        padding: 0 0 0 5%;
+        li {
+          margin: 2px 0;
+          list-style-type: none;
+        }
       }
     }
   }
-  @include md {
-    padding: 0 15%;
-    .project_home {
-      .image_wrapper {
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: flex-end;
-        img {
-          margin-right: 20px;
-          width: 20vw;
-        }
-        .text_wrapper {
-          h1 {
-            font-size: 5em;
-            text-align: left;
-          }
-          p {
-            font-size: 1.3rem;
-            text-align: left;
-          }
-        }
+  .content_wrapper {
+    width: 75vw;
+    display: flex;
+    justify-content: center;
+    .content {
+      width: 80%;
+      margin-top: 10vh;
+      background: rgba($color: #151515, $alpha: 0.2);
+      backdrop-filter: blur(3em);
+      border-radius: 10px;
+      box-shadow: 2px -2px 10px 1px rgba(#020202, 0.3);
+      padding: 0 5%;
+      p {
+        text-align: left;
       }
-    }
-    .content_wrapper {
-      padding: 3% 0;
       ul {
         padding: 0 3%;
         flex-direction: row;
       }
       .resume {
-        margin-top: 20vh;
-        padding: 0 10px;
+        margin: 5% 0 10% 0;
+        font-weight: 800;
+        font-size: 1.2em;
       }
-      .link_website {
-        width: 60%;
-        height: 100px;
+      .link {
+        display: flex;
+        justify-content: space-around;
+        margin: 10% 0;
+        a {
+          color: white;
+          text-transform: uppercase;
+          font-family: "Pano";
+          font-weight: 800;
+          transition: all 0.2s ease;
+          text-decoration: none;
+          position: relative;
+          &::after {
+            content: "";
+            transition: opacity 0.3s;
+            width: 100%;
+            height: 2px;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+          }
+          &:hover {
+            &::after {
+              animation: coverUp 0.3s ease forwards;
+            }
+          }
+        }
+      }
+      .textes {
+        p {
+          font-size: 1em;
+        }
+        margin: 0 0 10% 0;
+        padding: 0 2%;
+      }
+      .images {
+        video,
+        img {
+          width: 100%;
+          margin-bottom: 1vh;
+        }
       }
     }
   }
@@ -237,91 +269,34 @@ export default {
     height: 100vh;
     width: 100vw;
     z-index: -1;
-  }
-  .project_home {
-    .image_wrapper {
-      box-shadow: 0 -20px 10px -20px rgba($color: #000000, $alpha: 0.4);
-      display: flex;
-      padding: 10% 0 5% 0;
-      img {
-        display: block;
-        position: relative;
-        z-index: 1;
-        box-shadow: 0 0 5px 3px rgba($color: #000000, $alpha: 0.2);
-      }
-      .text_wrapper {
-        display: flex;
-        flex-direction: column;
-        justify-items: flex-end;
-        h1 {
-          margin: 20px 0 0 0;
-          text-transform: uppercase;
-        }
-        * {
-          margin: 0;
-        }
-      }
+    background-position-y: center;
+    background-size: 100% 100%;
+    transition: all 3s ease;
+    &.before-enter {
+      background-position-y: bottom;
+      background-size: 100% 2000px;
     }
   }
-  .content_wrapper {
-    backdrop-filter: blur(3em);
-    border-radius: 10px;
-    box-shadow: 2px -2px 10px 1px rgba(#020202, 0.3);
-    ul {
-      display: flex;
-      justify-content: space-evenly;
-      margin: 0 0 15% 0;
-      li {
-        list-style-type: none;
-        span {
-          margin: 0 auto;
-        }
-      }
-    }
-    p {
-      text-align: center;
-    }
-    .resume {
-      margin: 10% 0 20% 0;
-    }
-    .link_website {
-      margin: 10% auto;
-      background-position: center;
-      background-attachment: fixed;
-      background-size: cover;
-      border-radius: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: all 0.2s ease;
-      &:hover {
-        border-radius: 15px;
-        .link_wrapper {
-          background: rgba($color: #020202, $alpha: 0.6);
-          p {
-            font-size: 1.1em;
-          }
-        }
-      }
-      .link_wrapper {
-        transition: all 0.3s ease;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: rgba($color: #020202, $alpha: 0.4);
-        text-decoration: none;
-        border-radius: 20px;
-        p {
-          color: white;
-          text-transform: uppercase;
-          font-family: "Pano";
-          font-weight: 800;
-          transition: all 0.1s ease;
-        }
-      }
-    }
+}
+
+@keyframes coverUp {
+  0% {
+    left: 0;
+    width: 100%;
+  }
+
+  50% {
+    left: 100%;
+    width: 0;
+  }
+
+  51% {
+    width: 0;
+    left: 0;
+  }
+
+  100% {
+    width: 100%;
   }
 }
 </style>

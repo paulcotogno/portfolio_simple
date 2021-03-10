@@ -1,5 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
+import About from '../views/About.vue'
+import PageComponent from '../views/Project-Components.vue'
 
 const routes = [
   {
@@ -13,28 +14,17 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: About
   },
   {
     path: '/project/:projetId',
     name: 'Project',
+    props: true,
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Project-Components.vue')
+    component: PageComponent
   },
 ]
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition
-    } else {
-      return { top: 0 }
-    }
-  },
-})
-
-export default router
+export default routes

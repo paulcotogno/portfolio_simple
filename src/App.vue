@@ -2,22 +2,30 @@
   <div class="scrollBar_wrapper">
     <div id="scrollBar"></div>
   </div>
-  <router-view :data="data" />
+
+  <router-view v-slot="{ Component }">
+    <transition
+      name="view"
+      mode="out-in"
+      @after-leave="$root.$emit('triggerScroll')"
+    >
+      <component :is="Component" :data="data"></component>
+    </transition>
+  </router-view>
+
   <div class="footer-end-credits">
     <p>All of the creations above are the property of Paul Cotogno</p>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
       publicPath: process.env.BASE_URL,
-      data: {
-        data: [],
-      },
+      data: [],
     };
   },
   mounted() {
@@ -35,17 +43,40 @@ export default {
       }
     });
 
-    axios
-      .get("data.json")
-      .then(
-        function (response) {
-          console.log(response.data);
-          this.data = response.data;
-        }.bind(this)
-      )
-      .catch(function (error) {
-        console.log(error);
-      });
+    var cheminComplet = document.location.href;
+    if (cheminComplet.includes("project")) {
+      axios
+        .get(`../data.json`)
+        .then(
+          function (response) {
+            console.log("app.vue", response.data);
+            this.data = response.data;
+          }.bind(this)
+        )
+        .catch(function (error) {
+          console.log("app.vue", error);
+        });
+    } else {
+      axios
+        .get(`data.json`)
+        .then(
+          function (response) {
+            console.log("app.vue", response.data);
+            this.data = response.data;
+          }.bind(this)
+        )
+        .catch(function (error) {
+          console.log("app.vue", error);
+        });
+    }
+
+    window.addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.key === "r") {
+        e.preventDefault();
+        e.stopPropagation();
+        this.$router.push("/");
+      }
+    });
   },
 };
 </script>
@@ -68,16 +99,77 @@ export default {
   font-weight: 300;
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap");
 
 html {
   background: #030303;
   scroll-behavior: smooth;
+  user-select: none;
 }
 
 h1 {
   font-family: "Pano";
   font-weight: 800;
+}
+
+.view-enter-active,
+.view-leave-active {
+  transition: all 0.7s ease;
+  &.home_page {
+    > * {
+      //transition: all 0.8s ease;
+    }
+  }
+  &.project_wrapper {
+    transition: all 0.9s ease;
+    .project_home {
+      transition: all 0.7s ease;
+    }
+    .content_wrapper {
+      transition: all 0.8s ease-out;
+    }
+  }
+}
+
+.view-enter-to,
+.view-leave-from {
+  &.project_wrapper {
+    opacity: 1;
+    .project_home {
+      transform: translateX(0);
+    }
+    .content_wrapper {
+      transform: translateY(0);
+    }
+  }
+  &.home_page {
+    > * {
+      //transform: translateX(0);
+      //opacity: 1;
+    }
+  }
+}
+
+.view-enter-from,
+.view-leave-to {
+  &.project_wrapper {
+    opacity: 0;
+    #nav {
+      opacity: 1;
+    }
+    .project_home {
+      transform: translateX(-100vw);
+    }
+    .content_wrapper {
+      transform: translateY(200vh);
+    }
+  }
+  &.home_page {
+    > * {
+      //transform: translateX(-50vw);
+      //opacity: 0;
+    }
+  }
 }
 
 @include sm {
@@ -100,7 +192,7 @@ h1 {
   ul,
   li,
   a {
-    font-size: 0.8em;
+    font-size: 0.9em;
   }
 }
 
@@ -116,7 +208,7 @@ a {
   p {
     text-align: center;
     font-weight: 300;
-    font-family: "JetBrains Mono", monospace;
+    font-family: "Montserrat", monospace;
   }
   width: 100vw;
   backdrop-filter: blur(10em);
@@ -139,7 +231,7 @@ a {
 
 #scrollBar {
   min-width: 100vw;
-  margin-right: 100%;
+  margin-left: -100%;
   height: 100%;
   display: block;
   background: rgb(131, 58, 180);

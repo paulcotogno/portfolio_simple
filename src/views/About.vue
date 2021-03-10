@@ -3,9 +3,9 @@
     <div id="nav">
       <div class="nav_wrapper">
         <h2 id="title">
-          <router-link to="/"
-            ><img src="@/assets/img/logo.svg" alt=""
-          /></router-link>
+          <router-link to="/">
+            <img src="@/assets/img/logo.svg" alt="" />
+          </router-link>
         </h2>
       </div>
     </div>
@@ -15,31 +15,33 @@
       <div id="line_wrapper">
         <div id="line_enter"></div>
       </div>
-      <div id="contact_infos">
-        <div id="text_wrapper">
-          <h2>Hi, I'm Paul</h2>
-          <p>a student who loves code and 3D stuff</p>
-          <p>Feel free to contact me !</p>
-          <div class="form-wrapper">
-            <form @submit.prevent="sendEmail">
-              <input
-                class="inp-text"
-                name="user_name"
-                type="text"
-                placeholder="E-mail"
-                v-model="email"
-              />
-              <textarea
-                class="inp-text"
-                name="message"
-                type="text"
-                placeholder="Message"
-              />
-              <div v-if="error">
-                <p>{{ error }}</p>
-              </div>
-              <button type="submit" value="send">Envoyer</button>
-            </form>
+      <div class="contact_infos_wrap">
+        <div id="contact_infos">
+          <div id="text_wrapper">
+            <h2>Hi, I'm Paul</h2>
+            <p>a student who loves code and 3D stuff</p>
+            <p>Feel free to contact me !</p>
+            <div class="form-wrapper">
+              <form @submit.prevent="sendEmail">
+                <input
+                  class="inp-text"
+                  name="user_name"
+                  type="text"
+                  placeholder="E-mail"
+                  v-model="email"
+                />
+                <textarea
+                  class="inp-text"
+                  name="message"
+                  type="text"
+                  placeholder="Message"
+                />
+                <div v-if="error">
+                  <p>{{ error }}</p>
+                </div>
+                <button type="submit" value="send">Envoyer</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -174,15 +176,14 @@ export default {
     var anim1 = true;
     var anim2 = false;
     var l = document.getElementById("line_enter");
+    var t = document.getElementById('text_wrapper');
 
     if (this.checkUserMobile() === false) {
       window.addEventListener("scroll", () => {
-        if (l) {
+        if (l && t) {
           var scroll = window.pageYOffset;
 
           var scrollVal = scroll / window.innerHeight;
-
-          console.log(scrollVal);
 
           if (scrollVal < 0.3) {
             l.style.height = "30vh";
@@ -196,7 +197,7 @@ export default {
 
           if (scrollVal > 1) {
             if (anim1) {
-              document.getElementById("text_wrapper").animate(
+              t.animate(
                 [
                   { transform: "translateX(-100%)", opacity: "0" },
                   { transform: "translateX(0)", opacity: "1" },
@@ -211,7 +212,7 @@ export default {
             }
           } else {
             if (anim2) {
-              document.getElementById("text_wrapper").animate(
+              t.animate(
                 [
                   { transform: "translateX(0)", opacity: "1" },
                   { transform: "translateX(-100%)", opacity: "0" },
@@ -228,12 +229,12 @@ export default {
         }
       });
     } else {
-      l.style.display = 'none';
-      document.getElementById("line_wrapper").style.pointerEvents = 'none';
+      l.style.display = "none";
+      document.getElementById("line_wrapper").style.pointerEvents = "none";
       document.getElementById("text_wrapper").style.opacity = 1;
-      document.getElementById("text_wrapper").style.width = '100vw';
-      document.getElementById("text_wrapper").style.margin = '0';
-      document.getElementById("contact_wrapper").style.margin = '0';
+      document.getElementById("text_wrapper").style.width = "100vw";
+      document.getElementById("text_wrapper").style.margin = "0";
+      document.getElementById("contact_wrapper").style.margin = "0";
     }
   },
 };
@@ -256,6 +257,7 @@ export default {
     height: 200vh;
     margin-top: -40vh;
     #line_wrapper {
+      pointer-events: none;
       height: 100vh;
       position: sticky;
       top: 0;
@@ -271,101 +273,115 @@ export default {
         background: #030303;
       }
     }
-    #contact_infos {
+    .contact_infos_wrap {
       width: 100vw;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      height: 100vh;
       position: sticky;
       bottom: 0;
-      height: 100vh;
-      #img_wrapper {
-        width: 30vw;
+      #contact_infos {
         display: flex;
-        justify-content: flex-end;
-        align-items: flex-start;
-        height: 70%;
-        opacity: 0;
-        img {
-          margin: 0 30px 0 0;
-          filter: grayscale(100%);
-        }
-      }
-      #text_wrapper {
-        width: 60vw;
-        justify-self: flex-end;
-        padding: 0 5vw;
-        display: flex;
-        flex-direction: column;
         justify-content: space-between;
-        height: fit-content;
-        opacity: 0;
-        margin: 0 0 0 30vw;
-        h2 {
-          font-size: 4em;
-          font-family: "Pano";
-          font-weight: 900;
-          margin: 0;
+        align-items: center;
+        height: 100%;
+        width: 70%;
+        margin-left: auto;
+        overflow: hidden;
+        @include sm {
+          width: 100%;
         }
-        p {
-          font-family: "Pano";
+        @include lg {
+          width: 70%;
         }
-        .form-wrapper {
+        #img_wrapper {
+          width: 30vw;
+          display: flex;
+          justify-content: flex-end;
+          align-items: flex-start;
+          height: 70%;
+          opacity: 0;
+          img {
+            margin: 0 30px 0 0;
+            filter: grayscale(100%);
+          }
+        }
+        #text_wrapper {
+          width: 60vw;
+          justify-self: flex-end;
+          padding: 0 5vw;
           display: flex;
           flex-direction: column;
-          align-content: center;
-          justify-content: center;
-          color: white;
-          form {
+          justify-content: space-between;
+          height: fit-content;
+          opacity: 0;
+          //margin: 0 0 0 30vw;
+          h2 {
+            font-size: 4em;
+            font-family: "Pano";
+            font-weight: 900;
+            margin: 0;
+          }
+          p {
+            font-family: "Montserrat";
+            font-weight: 400;
+            font-size: 2.4vh;
+          }
+          .form-wrapper {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            input,
-            textarea {
-              width: 100%;
-              color: white;
-              font-family: "Pano";
-            }
-            .inp-text:focus {
-              font-family: "Pano";
-              border: none;
-              border-bottom: 4px solid #fafafa;
-            }
-            .inp-text::placeholder {
-              font-family: "Pano";
-              opacity: 1;
-              color: #fafafa;
-            }
-            .inp-text {
-              outline: none;
-              margin-bottom: 20px;
-              border: none;
-              border-bottom: 2px solid white;
-              transition: all 0.1s ease;
-              padding: 10px 0;
-              background: transparent;
-              transition: all 0.1s ease;
-            }
-            textarea.inp-text {
-              resize: none;
-              height: 100px;
-            }
-            button {
-              cursor: pointer;
-              margin-top: 7%;
-              border: none;
-              background: none;
-              width: fit-content;
-              padding: 10px 10px 10px 10px;
-              text-transform: uppercase;
-              font-size: 0.8em;
-              background-position: left;
-              background-size: 55px auto;
-              background-repeat: no-repeat;
-              font-family: "Pano";
-              color: white;
-              font-weight: 200;
-              border: 1px white solid;
+            align-content: center;
+            justify-content: center;
+            color: white;
+            form {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              input,
+              textarea {
+                width: 100%;
+                color: white;
+                font-family: "Pano";
+              }
+              .inp-text:focus {
+                font-family: "Pano";
+                border: none;
+                border-bottom: 4px solid #fafafa;
+              }
+              .inp-text::placeholder {
+                font-family: "Pano";
+                opacity: 1;
+                color: #fafafa;
+              }
+              .inp-text {
+                outline: none;
+                margin-bottom: 20px;
+                border: none;
+                border-bottom: 2px solid white;
+                transition: all 0.1s ease;
+                padding: 10px 0;
+                background: transparent;
+                transition: all 0.1s ease;
+              }
+              textarea.inp-text {
+                resize: none;
+                height: 100px;
+              }
+              button {
+                cursor: pointer;
+                margin-top: 7%;
+                border: none;
+                background: none;
+                width: fit-content;
+                padding: 10px 10px 10px 10px;
+                text-transform: uppercase;
+                font-size: 0.8em;
+                background-position: left;
+                background-size: 55px auto;
+                background-repeat: no-repeat;
+                font-family: "Pano";
+                color: white;
+                font-weight: 200;
+                border: 1px white solid;
+              }
             }
           }
         }

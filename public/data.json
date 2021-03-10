@@ -1,45 +1,68 @@
-
-
-[
-    {
-      "id": 0,
-      "title": "seo-elp",
-      "link": "SeoElp",
-      "imagePath": "project_seoelp.png",
-      "imageLink": "SeoElp/1.png",
-      "projectType": "Student Project",
-      "resume":
-        "Design et Developpement de la Landing Page d’un projet en VueJs sur une plateforme de E-learning sur le SEO dirigé par un commanditaire.",
-      "color": "3d54d9",
-      "colorRGB": "61,84,217",
-      "webSiteLink": "http://seo-elp.fr/",
-      "category": ["Developpement", "Design", "Group Workflow"],
-      "technology": ["VueCLI", "JavaScript", "RellaxJs", "EmailJs"]
+[{
+    "id": 0,
+    "title": "seo-elp",
+    "titleBr": "Seo Elp",
+    "link": "SeoElp",
+    "imagePath": "project_seoelp.webp",
+    "imageLink": "SeoElp/1.webp",
+    "projectType": "Student Project",
+    "resume": "Design et Developpement de la Landing Page d’un projet en VueJs sur une plateforme de E-learning sur le SEO dirigé par Sylvain SAGOT.",
+    "color": "3d54d9",
+    "colorRGB": "61,84,217",
+    "webSiteLink": "http://seo-elp.fr/",
+    "category": ["Developpement", "Design", "Group Workflow"],
+    "technology": ["VueJs", "VueCLI", "JavaScript", "RellaxJs", "EmailJs"],
+    "textes": ["Durant ce projet collectif j'étais chargé du pôle développement, et j’ai endossé le rôle de chef de projet je devais ainsi veiller au bon déroulement des différentes étapes du projet en supervisant les autres pôles et en organisant les divers RDV entre mon équipe et notre commanditaire.",
+      "Design j’ai désigné la Landing Page du site en suivant la charte graphique préalablement définis par la responsable design. L’important était la disposition des éléments, la compréhension de la plateforme et son attractivité. La Landing Page à ainsi été conçue pour satisfaire l’utilisateur.",
+      "Après avoir réfléchi sur divers moyens de développement je me suis tourné vers le framework vueJs pour sa simplicité d’utilisation et son aspect modulable pour d’éventuelles reprises futur du site. Ce projet m'a ainsi permis de me familiariser avec ce framework j’ai pu me renseigner et apprendre les pratiques par moi même pour mener à bien le développement.",
+      "Les diverses animations du site ont été réalisées grâce au plugin RellaxJs qui permet une implémentation d’un effet de parallax au scroll."
+    ],
+    "images": [{
+        "type": "1",
+        "link": "/img/SeoElp/1.webp"
+      }, {
+        "type": "1",
+        "link": "/img/SeoElp/2.webp"
+      },{
+        "type": "1",
+        "link": "/img/SeoElp/3.png"
+      },{
+        "type": "2",
+        "link": "/img/SeoElp/4.mp4"
+      },{
+        "type": "2",
+        "link": "/img/SeoElp/5.mp4"
+      }
+      ]
     },
     {
       "id": 1,
       "title": "t.malick",
+      "titleBr": "Terrence Malick",
       "link": "TerrenceMalick",
-      "imagePath": "project_terrencemalick.png",
-      "imageLink": "Boss/1.png",
+      "imagePath": "project_terrencemalick.webp",
+      "imageLink": "Boss/1.webp",
       "projectType": "Student Project",
-      "resume":
-        "Conception et Developpement d’un site web en VueJs sur un sujet donné en 16h.",
+      "resume": "Conception et Developpement d’un site web en VueJs sur un sujet donné en 16h.",
       "color": "061512",
       "colorRGB": "6,21,18",
       "webSiteLink": "http://www.boss.paulcotogno.com/",
       "category": ["Developpement", "Design", "Fast Deadlines"],
-      "technology": ["VueCLI", "Php", "JavaScript"]
+      "technology": ["VueCLI", "Php", "JavaScript"],
+      "textes": ["Lors d’un examen terminal nous avons eu 4 heures pour réaliser une maquette graphique en version PC et Mobile sur un réalisateur donné. Suite à cela nous avons dû intégrer cette même maquette en HTML css.",
+        "Le jour suivant nous avions donc 8H pour développer la maquette en utilisant le framework Vue JS, L'examen disposer de plusieurs palier de complexité dont l'intégration d’une page en utilisant le système ajax et un formulaire relier à une base de donné avec un backend PHP pour implémenter la filmographie du réalisateur.",
+        "Quant à moi je suis tombé sur le réalisateur Terrence Mallick dont j’ai repris et adapté le style pour la conception de l’identité visuelle."
+      ]
     },
     {
       "id": 2,
       "title": "alias",
+      "titleBr": "alias",
       "link": "Alias",
-      "imagePath": "project_alias.png",
-      "imageLink": "Alias/1.png",
+      "imagePath": "project_alias.webp",
+      "imageLink": "Alias/1.webp",
       "projectType": "Personal Project",
-      "resume":
-        "Réalisation d'un site vitrine pour un design que j'ai créé pour un concours de design de vétements",
+      "resume": "Réalisation d'un site vitrine pour un design que j'ai créé pour un concours de design de vétements",
       "color": "fcff2a",
       "colorRGB": "212,215,2",
       "webSiteLink": "http://www.alias.paulcotogno.com/",
@@ -49,16 +72,20 @@
     {
       "id": 3,
       "title": "the dots",
+      "titleBr": "The Dots",
       "link": "TheDots",
-      "imagePath": "project_thedots.png",
-      "imageLink": "TheDots/1.png",
+      "imagePath": "project_thedots.webp",
+      "imageLink": "TheDots/1.webp",
       "projectType": "Student Project",
-      "resume":
-        "Recherche, design et développement de la partie FrontEnd et BackEnd d’un site web visant à aider les entreprises à augmenter leur crédibilité avec leur passé.",
+      "resume": "Recherche, design et développement de la partie FrontEnd et BackEnd d’un site web visant à aider les entreprises à augmenter leur crédibilité avec leur passé.",
       "color": "730800",
       "colorRGB": "115,8,0",
       "webSiteLink": "http://www.thedots.paulcotogno.com/",
       "category": ["Developpement", "Design", "Group Workflow"],
-      "technology": ["JavaScript", "Php"]
+      "technology": ["JavaScript", "Php"],
+      "textes": ["The Dots est un site internet visant à aider les entreprises dans leurs images de marque en leur permettant de créer leurs propres timeline représentant leur histoire.",
+        "Pour ce projet j'étais en charge du pôle développement j’ai dû développer la landing Page en utilisant les langages de programmations HTML CSS et Javascript.",
+        "La plateforme finale elle demandait un travail de back-end pour la création et l’archivation de frises j’ai donc utilisé diverses requêtes PHP."
+      ]
     }
   ]
